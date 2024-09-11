@@ -1,0 +1,57 @@
+version: '3.8'  
+
+services:
+  haproxy:
+    image: haproxy:1.7-alpine
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    links:
+      - server-john
+      - server-paul
+      - server-ringo
+    ports:
+     - "8080:80"
+
+  server-john:
+    image: backend-quizz-app
+    # container_name: quiz-app
+    links:
+      - redis
+    environment:
+      - NAME=John
+      - REDIS_URL=redis://redis:6379
+    expose:
+      - "8080"
+  
+  server-paul:
+    image: backend-quizz-app
+    # container_name: quiz-app
+    links:
+      - redis
+    environment:
+      - NAME=Paul
+      - REDIS_URL=redis://redis:6379
+    expose:
+      - "8080"
+
+  server-ringo:
+    image: backend-quizz-app
+    # container_name: quiz-app
+    links:
+      - redis
+    environment:
+      - NAME=Ringo
+      - REDIS_URL=redis://redis:6379
+    expose:
+      - "8080"
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
